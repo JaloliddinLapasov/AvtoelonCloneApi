@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "AD00eDsPXtVzC+pJav9lYrPMDkaQHCk5DVXE1EEb2Bw=",
+  "Source": "AvtoelonCloneApi",
+  "BasePath": "_content/AvtoelonCloneApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
