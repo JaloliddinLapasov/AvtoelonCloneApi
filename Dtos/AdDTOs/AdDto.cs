@@ -1,22 +1,29 @@
-
+using System.ComponentModel.DataAnnotations;
 using AvtoelonCloneApi.Models;
 
-namespace AvtoelonCloneApi.Models
+namespace AvtoelonCloneApi.Dtos.AdDTOs
 {
-    public class    Ad
+    public class AdDto
     {
-        public int Id { get; set; }
+        [Required]
         public string? Title { get; set; }
-        public string? Description { get; set; }
-        public decimal Price { get; set; }
-        public Currency Currency { get; set; } // Enum sifatida
-        public Category Category { get; set; } // Enum sifatida
-        public Location Location { get; set; } // Enum sifatida
-        public string? ContactName { get; set; }
-        public string? ContactPhone { get; set; }
-        //public string ImagePath { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public string? ImagePath { get; set; }
+        [Required]
+        // [StringLength(100)]
 
+        public string? Description { get; set; }
+        [Required]
+        public decimal Price { get; set; }
+        [Required]
+        public Currency Currency { get; set; } // Enum sifatida
+        [Required]
+        public Category Category { get; set; } // Enum sifatida
+        [Required]
+        public Location Location { get; set; } // Enum sifatida
+        [Required]
+        public string? ContactName { get; set; }
+        [Required]
+        public string? ContactPhone { get; set; }
+        [Required]
+        public string? ImagePath { get; set; }
     }
 }

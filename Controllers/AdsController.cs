@@ -1,10 +1,12 @@
 using AvtoelonCloneApi.Data;
+using AvtoelonCloneApi.Dtos.AdDTOs;
+using AvtoelonCloneApi.Mappers;
 using AvtoelonCloneApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 
-namespace AdApi.Controllers
+namespace AvtoelonCloneApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -29,7 +31,7 @@ namespace AdApi.Controllers
 
         // GET: api/ads/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ad>> GetAd(int id)
+        public async Task<IActionResult> GetAd(int id)
         {
             var ad = await _context.Ads.FindAsync(id);
 
@@ -43,75 +45,102 @@ namespace AdApi.Controllers
 
         // POST: api/ads
         [HttpPost]
-        public async Task<ActionResult<Ad>> PostAd([FromForm] Ad ad, IFormFile? images)
+        public async Task<IActionResult> PostAd([FromBody] AdDto adDTO, IFormFile file)
         {
             // Validatsiya: Enum qiymatlarni tekshirish
-            if (!Enum.IsDefined(typeof(Currency), ad.Currency))
-            {
-                return BadRequest(new { message = "Noto‘g‘ri valyuta tanlandi. Faqat USD, UZS yoki RUB tanlanishi mumkin." });
-            }
+            // if (!Enum.IsDefined(typeof(Currency), adDTO.Currency))
+            // {
+            //     return BadRequest(new { message = "Noto‘g‘ri valyuta tanlandi. Faqat USD, UZS yoki RUB tanlanishi mumkin." });
+            // }
 
-            if (!Enum.IsDefined(typeof(Category), ad.Category))
-            {
-                return BadRequest(new { message = "Noto‘g‘ri kategoriya tanlandi. Faqat YengilAvtomobillar, EhtiyotQismlar yoki Xizmatlar tanlanishi mumkin." });
-            }
+            // if (!Enum.IsDefined(typeof(Category), adDTO.Category))
+            // {
+            //     return BadRequest(new { message = "Noto‘g‘ri kategoriya tanlandi. Faqat YengilAvtomobillar, EhtiyotQismlar yoki Xizmatlar tanlanishi mumkin." });
+            // }
 
-            if (!Enum.IsDefined(typeof(Location), ad.Location))
-            {
-                return BadRequest(new { message = "Noto‘g‘ri joylashuv tanlandi. Faqat belgilangan joylashuvlardan biri tanlanishi mumkin." });
-            }
+            // if (!Enum.IsDefined(typeof(Location), adDTO.Location))
+            // {
+            //     return BadRequest(new { message = "Noto‘g‘ri joylashuv tanlandi. Faqat belgilangan joylashuvlardan biri tanlanishi mumkin." });
+            // }
 
-            // Boshqa maydonlar uchun oddiy validatsiya
-            if (string.IsNullOrWhiteSpace(ad.Title) || ad.Title.Length < 5)
-            {
-                return BadRequest(new { message = "Sarlavha kamida 5 belgidan iborat bo‘lishi kerak." });
-            }
+            // // Boshqa maydonlar uchun oddiy validatsiya
+            // if (string.IsNullOrWhiteSpace(adDTO.Title) || adDTO.Title.Length < 5)
+            // {
+            //     return BadRequest(new { message = "Sarlavha kamida 5 belgidan iborat bo‘lishi kerak." });
+            // }
 
-            if (string.IsNullOrWhiteSpace(ad.Description) || ad.Description.Length < 20)
-            {
-                return BadRequest(new { message = "Tavsif kamida 20 belgidan iborat bo‘lishi kerak." });
-            }
+            // if (string.IsNullOrWhiteSpace(adDTO.Description) || adDTO.Description.Length < 20)
+            // {
+            //     return BadRequest(new { message = "Tavsif kamida 20 belgidan iborat bo‘lishi kerak." });
+            // }
 
-            if (ad.Price <= 0)
-            {
-                return BadRequest(new { message = "Narx 0 dan katta bo‘lishi kerak." });
-            }
+            // if (adDTO.Price <= 0)
+            // {
+            //     return BadRequest(new { message = "Narx 0 dan katta bo‘lishi kerak." });
+            // }
 
-            if (string.IsNullOrWhiteSpace(ad.ContactName))
-            {
-                return BadRequest(new { message = "Aloqa uchun ism kiritilishi shart." });
-            }
+            // if (string.IsNullOrWhiteSpace(adDTO.ContactName))
+            // {
+            //     return BadRequest(new { message = "Aloqa uchun ism kiritilishi shart." });
+            // }
 
-            if (string.IsNullOrWhiteSpace(ad.ContactPhone) || !System.Text.RegularExpressions.Regex.IsMatch(ad.ContactPhone, @"^[+]?[0-9]{1,3}?[-.\s]?([0-9]{1,3}){2}([0-9]{1,4})$"))
-            {
-                return BadRequest(new { message = "Yaroqli telefon raqam kiriting (masalan, +998901234567)." });
-            }
+            // if (string.IsNullOrWhiteSpace(adDTO.ContactPhone) || !System.Text.RegularExpressions.Regex.IsMatch(adDTO.ContactPhone, @"^[+]?[0-9]{1,3}?[-.\s]?([0-9]{1,3}){2}([0-9]{1,4})$"))
+            // {
+            //     return BadRequest(new { message = "Yaroqli telefon raqam kiriting (masalan, +998901234567)." });
+            // }
+            var adModel = adDTO.ToAdFromAdDTO();
 
             // Rasmni saqlash
-            if (images != null)
+            if (file != null)
             {
-                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
-                if (!Directory.Exists(uploadsFolder))
+                var imagePath = Path.Combine(_environment.WebRootPath, "uploads");
+                if (!Directory.Exists(imagePath))
                 {
-                    Directory.CreateDirectory(uploadsFolder);
+                    Directory.CreateDirectory(imagePath);
                 }
 
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + images.FileName;
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                var fileExtension = Path.GetExtension(file.FileName).ToLower();
+                if (!allowedExtensions.Contains(fileExtension))
                 {
-                    await images.CopyToAsync(fileStream);
+                    return BadRequest("Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.");
                 }
 
-                ad.ImagePath = $"/uploads/{uniqueFileName}";
+                const long maxFileSize = 5 * 1024 * 1024; // 5MB
+                if (file.Length > maxFileSize)
+                {
+                    return BadRequest("File size exceeds the maximum limit of 5MB.");
+                }
+
+                var fileName = $"{Guid.NewGuid()}{fileExtension}";
+                var filePath = Path.Combine(imagePath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+
+                // var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                // var filePath = Path.Combine(imagePath, uniqueFileName);
+
+                // using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // {
+                //     await file.CopyToAsync(fileStream);
+                // }
+
+                // Bazaga faqat rasmning yo‘li saqlanadi
+                // ad   DTO.ImagePath = $"/uploads/{uniqueFileName}";
+                adModel.ImagePath = $"/images/{fileName}";
             }
 
-            // E‘lonni saqlash
-            _context.Ads.Add(ad);
+
+
+            await _context.Ads.AddAsync(adModel);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetAd), new { id = ad.Id }, ad);
+            return CreatedAtAction(nameof(GetAd), new { id = adModel.Id }, adModel);
         }
 
         // PUT: api/ads/5
