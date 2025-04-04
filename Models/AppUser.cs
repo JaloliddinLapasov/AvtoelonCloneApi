@@ -10,6 +10,6 @@ using Microsoft.AspNetCore.Identity;
             // public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
             // Navigation Property (agar kerak bo'lsa)
-            public virtual ICollection<Listing>? Listings { get; set; }
+            //public virtual ICollection<Listing>? Listings { get; set; }
         }
     }

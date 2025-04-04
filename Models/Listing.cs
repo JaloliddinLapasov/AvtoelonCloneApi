@@ -5,65 +5,44 @@ using System.ComponentModel.DataAnnotations;
     {
         public class Listing
         {
-            [Key] // Primary Key
             public int Id { get; set; }
 
-            [Required(ErrorMessage = "Sarlavha majburiy")]
+            [Required]
             [MaxLength(200)]
             public string Title { get; set; } = string.Empty;
 
-            [Required(ErrorMessage = "Kategoriya majburiy")]
-            [MaxLength(100)]
-            public string Category { get; set; } = string.Empty; // Masalan: "yengil-avtomobillar"
+            [Required]
+            public string Category { get; set; } = string.Empty; // Masalan: "yengil-avtomobillar", "ehtiyot-qismlar"
 
-            [Required(ErrorMessage = "Narx majburiy")]
-            [Column(TypeName = "decimal(18,2)")] // Ma'lumotlar bazasida aniq tur
-            [Range(0.01, double.MaxValue, ErrorMessage = "Narx 0 dan katta bo'lishi kerak")]
+            [Required]
+            [Column(TypeName = "decimal(18,2)")]
             public decimal Price { get; set; }
 
-            [Required(ErrorMessage = "Valyuta majburiy")]
+            [Required]
             [MaxLength(10)]
-            public string Currency { get; set; } = "USD"; // Default "USD"
+            public string Currency { get; set; } = "USD"; // Masalan: "USD", "UZS"
 
-            [Required(ErrorMessage = "Tavsif majburiy")]
-            [MinLength(20, ErrorMessage = "Tavsif kamida 20 belgi bo'lishi kerak")]
+            [Required]
             public string Description { get; set; } = string.Empty;
 
-            [Required(ErrorMessage = "Joylashuv majburiy")]
-            [MaxLength(150)]
+            [Required]
             public string Location { get; set; } = string.Empty;
 
-            // Rasmlar uchun (oddiy variant - URL lar ro'yxati JSON sifatida)
-            public string? ImageUrlsJson { get; set; } // JSON string saqlash uchun
+            // Rasm URL larini saqlash uchun (oddiy variant)
+            // Haqiqiy loyihada rasmlarni alohida saqlash va boshqarish kerak
+            public List<string> ImageUrls { get; set; } = new List<string>();
 
-            [NotMapped] // Bu maydon DB ga yozilmaydi
-            public List<string> ImageUrls
-            {
-                get => string.IsNullOrEmpty(ImageUrlsJson)
-                       ? new List<string>()
-                       : System.Text.Json.JsonSerializer.Deserialize<List<string>>(ImageUrlsJson) ?? new List<string>();
-                set => ImageUrlsJson = System.Text.Json.JsonSerializer.Serialize(value);
-            }
-
-
-            [Required(ErrorMessage = "Aloqa uchun ism majburiy")]
-            [MaxLength(100)]
+            [Required]
             public string ContactName { get; set; } = string.Empty;
 
-            [Required(ErrorMessage = "Aloqa uchun telefon majburiy")]
-            [Phone(ErrorMessage = "Yaroqli telefon raqam kiriting")]
-            [MaxLength(50)]
+            [Required]
             public string ContactPhone { get; set; } = string.Empty;
 
             public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-            public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-            // Foreign Key - Foydalanuvchi bilan bog'lanish
+            // Foydalanuvchi bilan bog'lash (kim e'lonni joylagani)
             [Required]
-            public string UserId { get; set; } = string.Empty;
-
-            // Navigation Property
-            [ForeignKey("UserId")]
-            public virtual AppUser? User { get; set; }
+            public string? UserId { get; set; }
+            public AppUser? User { get; set; }
         }
     }

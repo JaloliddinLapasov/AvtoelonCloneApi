@@ -154,6 +154,7 @@ C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\AvtoelonCloneApi.
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\AvtoelonCloneApi.csproj.CoreCompileInputs.cache
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\AvtoelonCloneApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\AvtoelonCloneApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\AvtoelonCloneApi.sourcelink.json
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\scopedcss\bundle\AvtoelonCloneApi.styles.css
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\staticwebassets.development.json
@@ -170,4 +171,3 @@ C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\refint\AvtoelonCl
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\AvtoelonCloneApi.pdb
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\AvtoelonCloneApi.genruntimeconfig.cache
 C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\ref\AvtoelonCloneApi.dll
-C:\Users\user\Desktop\Lesson\AvtoelonCloneApi\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

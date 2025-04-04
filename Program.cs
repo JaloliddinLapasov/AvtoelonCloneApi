@@ -1,7 +1,9 @@
 using AvtoelonCloneApi.Data;
     using AvtoelonCloneApi.Models;
-    using AvtoelonCloneApi.Services; // TokenService uchun
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AvtoelonCloneApi.Services;
+
+//using AvtoelonCloneApi.Services; // TokenService uchun
+using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Tokens;
@@ -16,7 +18,7 @@ builder.WebHost.UseUrls("http://localhost:5000", "https://localhost:5001"); // H
 // --- Servislarni Konfiguratsiya Qilish ---
 
 // 1. DbContext (MSSQL Server)
-builder.Services.AddDbContext<AppDataContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
             // SQL Server uchun qo'shimcha sozlamalar (masalan, retry logic)
             sqlServerOptionsAction: sqlOptions =>
@@ -26,6 +28,11 @@ builder.Services.AddDbContext<AppDataContext>(options =>
                     maxRetryDelay: TimeSpan.FromSeconds(30),
                     errorNumbersToAdd: null);
             }));
+
+
+
+
+
 
     // 2. Identity
     builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -43,8 +50,17 @@ builder.Services.AddDbContext<AppDataContext>(options =>
         // Kirish sozlamalari (masalan, email tasdiqlash)
         // options.SignIn.RequireConfirmedAccount = true;
     })
-    .AddEntityFrameworkStores<AppDataContext>()
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders(); // Parolni tiklash kabi funksiyalar uchun
+
+
+
+
+
+
+
+
+
 
     // 3. JWT Autentifikatsiyasi
     var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -130,6 +146,12 @@ builder.Services.AddDbContext<AppDataContext>(options =>
     // 7. CORS (Cross-Origin Resource Sharing)
     builder.Services.AddCors(options =>
     {
+        options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
         options.AddPolicy("AllowFrontend", policy =>
         {
             // Frontend manzilingizni shu yerga yozing
@@ -141,8 +163,17 @@ builder.Services.AddDbContext<AppDataContext>(options =>
         });
     });
 
-    // 8. Custom Servislar (masalan, TokenService)
+    
+    
+    
+    
+    //8. Custom Servislar (masalan, TokenService)
     builder.Services.AddScoped<ITokenService, TokenService>();
+
+
+
+
+
 
     // 9. Logging
     builder.Logging.ClearProviders();
@@ -178,7 +209,7 @@ builder.Services.AddDbContext<AppDataContext>(options =>
 
     app.UseRouting(); // Marshrutlashni yoqish
 
-    app.UseCors("AllowFrontend"); // CORS policy ni qo'llash
+    app.UseCors("AllowAll"); // CORS policy ni qo'llash
 
     app.UseAuthentication(); // Kimligini tekshirish
     app.UseAuthorization(); // Ruxsatini tekshirish
@@ -193,7 +224,7 @@ builder.Services.AddDbContext<AppDataContext>(options =>
         try
         {
             logger.LogInformation("Ma'lumotlar bazasini migratsiya qilish boshlandi.");
-            var context = services.GetRequiredService<AppDataContext>();
+            var context = services.GetRequiredService<AppDbContext>();
             await context.Database.MigrateAsync(); // Migratsiyalarni avtomatik qo'llash
             logger.LogInformation("Ma'lumotlar bazasini migratsiya qilish tugallandi.");
 
